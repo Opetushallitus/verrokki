@@ -1,0 +1,27 @@
+services:
+  verrokki-opensearch:
+    container_name: "verrokki-opensearch"
+    # AWS:n tukema OpenSearch versio
+    image: "opensearchproject/opensearch:3.7.0"
+    ports:
+      - "127.0.0.1:9200:9200"
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - verrokki-opensearch-data:/usr/share/opensearch/data
+
+  verrokki-opensearch-dashboards:
+    container_name: "verrokki-opensearch-dashboards"
+    image: "opensearchproject/opensearch-dashboards:3.7.0"
+    ports:
+      - "127.0.0.1:5601:5601"
+    environment:
+      - OPENSEARCH_HOSTS=["http://verrokki-opensearch:9200"]
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      - verrokki-opensearch
+
+volumes:
+  verrokki-opensearch-data:
